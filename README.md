@@ -30,7 +30,7 @@ pension-application-form/ │ ├── index.html         # HTML structure ├�
 
 ## 📸 Screenshot
 
-![Pension Form Screenshot](shttps://github.com/Raghav335/Pension-Application-Form-/blob/main/application.jpg)  
+![Pension Form Screenshot]()  
 
 
 ## 💡 Technologies Used
