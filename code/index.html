@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pension Application Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Pension Application Form</h2>
+
+    <form id="pensionForm" novalidate>
+      <div class="grid">
+        <div>
+          <label for="name">Full Name</label>
+          <input id="name" type="text" required placeholder="e.g., Ramesh Kumar" />
+        </div>
+        <div>
+          <label for="dob">Date of Birth</label>
+          <input id="dob" type="date" required />
+        </div>
+        <div>
+          <label for="aadhaar">Aadhaar Number</label>
+          <input id="aadhaar" type="text" maxlength="12" required />
+        </div>
+        <div>
+          <label for="phone">Phone Number</label>
+          <input id="phone" type="tel" maxlength="10" required />
+        </div>
+        <div>
+          <label for="state">State / Area</label>
+          <input id="state" type="text" required />
+        </div>
+        <div>
+          <label for="bankName">Bank Name</label>
+          <input id="bankName" type="text" required />
+        </div>
+        <div>
+          <label for="accountNumber">Bank Account Number</label>
+          <input id="accountNumber" type="text" required />
+        </div>
+        <div>
+          <label for="ifsc">IFSC Code</label>
+          <input id="ifsc" type="text" required />
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label for="address">Address</label>
+        <textarea id="address" required></textarea>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" type="submit">Submit</button>
+        <button class="btn-ghost" type="button" onclick="showRecords()">Show All Records</button>
+        <button class="btn-danger" type="button" onclick="clearRecords()">Clear All Records</button>
+      </div>
+
+      <div id="notice" class="notice"></div>
+    </form>
+
+    <div class="records">
+      <div id="output"></div>
+      <div id="allRecords"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
