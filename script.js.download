@@ -1,0 +1,124 @@
+const KEY = 'pensionRecords';
+const getRecords = () => JSON.parse(localStorage.getItem(KEY) || '[]');
+const setRecords = (recs) => localStorage.setItem(KEY, JSON.stringify(recs));
+
+const isAadhaar = v => /^[0-9]{12}$/.test(v.trim());
+const isPhone = v => /^[0-9]{10}$/.test(v.trim());
+const isIFSC = v => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.trim().toUpperCase());
+
+const maskAadhaar = v => v.replace(/^(\d{4})(\d{4})(\d{4})$/, '$1-$2-$3');
+const maskAccount = v => v.length > 4 ? 'xxxx-xxxx-' + v.slice(-4) : v;
+
+function flash(msg, ok = true) {
+  const n = document.getElementById('notice');
+  n.textContent = msg;
+  n.style.display = 'block';
+  n.style.background = ok ? '#ecfdf5' : '#fef2f2';
+  n.style.color = ok ? '#065f46' : '#7f1d1d';
+  n.style.border = ok ? '1px solid #bbf7d0' : '1px solid #fecaca';
+  setTimeout(() => { n.style.display = 'none'; }, 2500);
+}
+
+document.getElementById('pensionForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const data = {
+    name: document.getElementById('name').value.trim(),
+    dob: document.getElementById('dob').value,
+    aadhaar: document.getElementById('aadhaar').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    state: document.getElementById('state').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    bankName: document.getElementById('bankName').value.trim(),
+    accountNumber: document.getElementById('accountNumber').value.trim(),
+    ifsc: document.getElementById('ifsc').value.trim().toUpperCase(),
+    createdAt: new Date().toISOString()
+  };
+
+  if (!isAadhaar(data.aadhaar)) return flash('Invalid Aadhaar number.', false);
+  if (!isPhone(data.phone)) return flash('Invalid phone number.', false);
+  if (!isIFSC(data.ifsc)) return flash('Invalid IFSC code.', false);
+
+  const recs = getRecords();
+  recs.push(data);
+  setRecords(recs);
+
+  const out = document.getElementById('output');
+  out.innerHTML = `
+    <div class="card">
+      <h3 style="margin:0 0 6px">Application Submitted ✔</h3>
+      <div class="small">Saved temporarily in browser</div>
+      <div style="margin-top:8px">
+        <div><strong>Name:</strong> ${data.name}</div>
+        <div><strong>DOB:</strong> ${data.dob}</div>
+        <div><strong>Aadhaar:</strong> ${maskAadhaar(data.aadhaar)}</div>
+        <div><strong>Phone:</strong> ${data.phone}</div>
+        <div><strong>State:</strong> ${data.state}</div>
+        <div><strong>Address:</strong> ${data.address}</div>
+        <div><strong>Bank:</strong> ${data.bankName}</div>
+        <div><strong>Account No:</strong> ${maskAccount(data.accountNumber)}</div>
+        <div><strong>IFSC:</strong> ${data.ifsc}</div>
+      </div>
+    </div>
+  `;
+  this.reset();
+  flash('Saved!');
+});
+
+function showRecords() {
+  const container = document.getElementById('allRecords');
+  const recs = getRecords();
+  if (!recs.length) {
+    container.innerHTML = '<div class="card">No records found.</div>';
+    return;
+  }
+  let rows = recs.map((r, i) => `
+    <tr>
+      <td><strong>#${i + 1}</strong></td>
+      <td><strong>${r.name}</strong><br/><span class="small">${r.address}<br/>${r.state}</span></td>
+      <td>
+        DOB: ${r.dob}<br/>
+        Aadhaar: ${maskAadhaar(r.aadhaar)}<br/>
+        Phone: ${r.phone}
+      </td>
+      <td>
+        ${r.bankName}<br/>
+        Acc: ${maskAccount(r.accountNumber)}<br/>
+        IFSC: ${r.ifsc}
+      </td>
+      <td class="small">${new Date(r.createdAt).toLocaleString()}</td>
+      <td><button onclick="deleteRecord(${i})">Delete</button></td>
+    </tr>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="card">
+      <h3>All Submitted Records</h3>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Applicant</th><th>Identity</th><th>Bank</th><th>Saved At</th><th>Action</th></tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function deleteRecord(index) {
+  const recs = getRecords();
+  if (!confirm('Delete this record?')) return;
+  recs.splice(index, 1);
+  setRecords(recs);
+  showRecords();
+  flash('Record deleted.');
+}
+
+function clearRecords() {
+  if (!confirm('Delete all records?')) return;
+  localStorage.removeItem(KEY);
+  document.getElementById('allRecords').innerHTML = '<div class="card">All records cleared.</div>';
+  flash('All records cleared.');
+}
+
+window.showRecords = showRecords;
+window.clearRecords = clearRecords;
+window.deleteRecord = deleteRecord;
