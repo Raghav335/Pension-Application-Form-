@@ -1,4 +1,4 @@
-# Pension-Application-Form-
+
 # Pension Application Form
 
 This is a simple web-based Pension Application Form built using **HTML**, **CSS**, and **JavaScript**. It allows users to submit pension details, view all submitted records, and manage them using the browser's `localStorage`.
